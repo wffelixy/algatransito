@@ -4,10 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algatransito.domain.model.Proprietario;
@@ -33,19 +37,23 @@ public class ProprietarioController {
 
 	@GetMapping("/{proprietarioId}")
 	public ResponseEntity<Proprietario> buscar(@PathVariable Long proprietarioId) {
-		
 
-		//Recurso via lambda
-		return proprietarioRepository.findById(proprietarioId)
-				.map(proprietario -> ResponseEntity.ok(proprietario))
+		// Recurso via lambda
+		return proprietarioRepository.findById(proprietarioId).map(proprietario -> ResponseEntity.ok(proprietario))
 				.orElse(ResponseEntity.notFound().build());
-		
-		//TODO Recurso sem usar Lambda
-		//		if (proprietario.isPresent()) {
+
+		// TODO Recurso sem usar Lambda
+		// if (proprietario.isPresent()) {
 //			return ResponseEntity.ok(proprietario.get());
 //		}
 //		
 //		return ResponseEntity.notFound().build();
+	}
+
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public Proprietario cadastrar(@RequestBody Proprietario proprietario) {
+		return proprietarioRepository.save(proprietario);
 	}
 
 }
