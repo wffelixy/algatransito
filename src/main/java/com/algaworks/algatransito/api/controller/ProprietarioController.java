@@ -17,11 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algatransito.domain.model.Proprietario;
 import com.algaworks.algatransito.domain.repository.ProprietarioRepository;
+import com.algaworks.algatransito.domain.service.RegistroProprietarioService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/proprietarios")
 public class ProprietarioController {
 
+	@Autowired
+	private RegistroProprietarioService registroProprietarioService;
+	
 	@Autowired
 	private ProprietarioRepository proprietarioRepository;
 
@@ -53,8 +59,8 @@ public class ProprietarioController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Proprietario cadastrar(@RequestBody Proprietario proprietario) {
-		return proprietarioRepository.save(proprietario);
+	public Proprietario cadastrar(@Valid @RequestBody Proprietario proprietario) {
+		return registroProprietarioService.salvar(proprietario);
 	}
 
 	@PutMapping("/{proprietarioId}")
@@ -67,7 +73,7 @@ public class ProprietarioController {
 
 		proprietario.setId(proprietarioId);
 
-		Proprietario proprietarioAtualizado = proprietarioRepository.save(proprietario);
+		Proprietario proprietarioAtualizado = registroProprietarioService.salvar(proprietario);
 
 		return ResponseEntity.ok(proprietarioAtualizado);
 	}
@@ -78,8 +84,7 @@ public class ProprietarioController {
 			return ResponseEntity.notFound().build();
 		}
 		
-		proprietarioRepository.deleteById(proprietarioId);
-		
+		registroProprietarioService.ecluir(proprietarioId);		
 		return ResponseEntity.noContent().build();
 	}
 
